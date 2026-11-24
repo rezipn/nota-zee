@@ -1,0 +1,159 @@
+<div class="layout">
+  <!-- FORM -->
+  <section class="form no-print">
+    <header>
+      <p class="logo-text">🧾 NotaZee</p>
+      <div class="mascot" title="Halo!">
+        <svg viewBox="0 0 120 120" width="84" height="84">
+          <rect x="28" y="14" width="64" height="88" rx="10" fill="#fffdf6" stroke="#B6AE9F" stroke-width="3"/>
+          <path d="M28 92 l8 8 8-8 8 8 8-8 8 8 8-8 8 8 8-8" fill="none" stroke="#B6AE9F" stroke-width="3" stroke-linejoin="round"/>
+          <circle class="eye" cx="50" cy="48" r="6" fill="#2b2118"/>
+          <circle class="eye" cx="70" cy="48" r="6" fill="#2b2118"/>
+          <path class="smile" d="M50 62 Q60 72 70 62" fill="none" stroke="#2b2118" stroke-width="3" stroke-linecap="round"/>
+          <circle cx="42" cy="60" r="5" fill="#F4B6C2" opacity=".8"/>
+          <circle cx="78" cy="60" r="5" fill="#F4B6C2" opacity=".8"/>
+          <g class="arm"><path d="M28 58 Q12 52 14 38" fill="none" stroke="#2b2118" stroke-width="3" stroke-linecap="round"/></g>
+          <g class="arm-r"><path d="M92 58 Q108 52 106 38" fill="none" stroke="#2b2118" stroke-width="3" stroke-linecap="round"/></g>
+        </svg>
+        <span class="bubble">Bikin nota yuk!</span>
+      </div>
+      <h1>Bikin nota,<br />langsung jadi.</h1>
+    </header>
+
+    <div class="group">
+  <h2>Profil toko</h2>
+  <label>Nama toko</label>
+  <input type="text" placeholder="cth: Toko Zee" [ngModel]="storeName()" (ngModelChange)="storeName.set($event)" />
+  <label>Alamat</label>
+  <input type="text" placeholder="cth: Jl. Contoh No. 12, Semarang" [ngModel]="storeAddress()" (ngModelChange)="storeAddress.set($event)" />
+  <label>No. telepon</label>
+  <input type="text" placeholder="cth: 0812-3456-7890" [ngModel]="storePhone()" (ngModelChange)="storePhone.set($event)" />
+  <label>Logo toko</label>
+  <label class="upload">
+    <input type="file" accept="image/*" (change)="onLogo($event)" hidden />
+    @if (logo()) { <img [src]="logo()" alt="Logo" /> } @else { <span>📷 Upload logo</span> }
+  </label>
+</div>
+
+    <div class="group">
+      <h2>Detail nota</h2>
+      <label>No. nota</label>
+      <input type="text" [ngModel]="invoiceNo()" (ngModelChange)="invoiceNo.set($event)" />
+      <label>Tanggal</label>
+      <input type="date" [ngModel]="date()" (ngModelChange)="date.set($event)" />
+      <label>Pelanggan</label>
+      <input type="text" placeholder="Nama pelanggan" [ngModel]="customer()" (ngModelChange)="customer.set($event)" />
+      <label>Catatan</label>
+      <input type="text" [ngModel]="notes()" (ngModelChange)="notes.set($event)" />
+    </div>
+
+    <div class="group">
+      <h2>Item</h2>
+      @for (item of items(); track $index) {
+        <div class="item-row">
+          <input type="text" [ngModel]="item.name" (ngModelChange)="item.name = $event" />
+          <input type="number" min="1" [ngModel]="item.qty" (ngModelChange)="item.qty = +$event" />
+          <input type="text" inputmode="numeric" placeholder="Harga" [value]="item.price ? rupiah(item.price) : ''" (input)="formatPriceInput(item, $event)" />
+          <button type="button" class="del" (click)="removeItem($index)">✕</button>
+        </div>
+      }
+      <div class="item-row add">
+        <input type="text" placeholder="Nama item" [ngModel]="newName()" (ngModelChange)="newName.set($event)" />
+        <input type="number" min="1" [ngModel]="newQty()" (ngModelChange)="newQty.set(+$event)" />
+        <input type="text" inputmode="numeric" placeholder="Harga" [value]="newPrice() ? rupiah(+newPrice()) : ''" (input)="formatNewPrice($event)" />
+        <button type="button" class="add-btn" (click)="addItem()">+</button>
+      </div>
+    </div>
+
+    <div class="group">
+  <h2>Diskon & pajak toko</h2>
+  <div class="tax-grid">
+    <div class="field">
+      <label>Diskon (%)</label>
+      <input type="number" min="0" max="100" [ngModel]="discount()" (ngModelChange)="discount.set(+$event)" />
+    </div>
+    <div class="field check">
+  <label class="switch">
+    <input type="checkbox" [ngModel]="taxOn()" (ngModelChange)="taxOn.set($event)" />
+    <span class="slider"></span>
+  </label>
+  <span class="switch-text">Pakai pajak toko</span>
+</div>
+    @if (taxOn()) {
+      <div class="field">
+        <label>Nama pajak</label>
+        <select [ngModel]="taxLabel()" (ngModelChange)="taxLabel.set($event)">
+          <option value="PPN">PPN</option>
+          <option value="Service">Service</option>
+          <option value="Pajak Restoran">Pajak Restoran</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>Pajak (%)</label>
+        <input type="number" min="0" max="100" [ngModel]="taxRate()" (ngModelChange)="taxRate.set(+$event)" />
+      </div>
+    }
+  </div>
+</div>
+
+    <div class="group">
+      <h2>Template</h2>
+      <div class="templates">
+  <button type="button" [class.on]="template() === 'minimal'" (click)="template.set('minimal')">Minimal</button>
+  <button type="button" [class.on]="template() === 'thermal'" (click)="template.set('thermal')">Struk Thermal</button>
+  <button type="button" [class.on]="template() === 'elegan'" (click)="template.set('elegan')">Elegan</button>
+  <button type="button" [class.on]="template() === 'biru'" (click)="template.set('biru')">Klasik Biru</button>
+  <button type="button" [class.on]="template() === 'merah'" (click)="template.set('merah')">Modern Merah</button>
+  <button type="button" [class.on]="template() === 'ombak'" (click)="template.set('ombak')">Ombak</button>
+  <button type="button" [class.on]="template() === 'vintage'" (click)="template.set('vintage')">Vintage</button>
+  <button type="button" [class.on]="template() === 'hijau'" (click)="template.set('hijau')">Hijau Ombak</button>
+</div>
+    </div>
+
+    <div class="actions">
+      <button type="button" class="print" (click)="print()">🖨️ Download / Print PDF</button>
+      <button type="button" class="ghost" (click)="newInvoice()">Nota Baru</button>
+    </div>
+  </section>
+
+  <!-- PREVIEW -->
+  <section class="preview-wrap">
+    <p class="preview-label no-print">Preview live — yang ini yang ke-print 👇</p>
+    <article class="nota" [class]="'nota tpl-' + template()">
+      <header class="nota-head">
+        @if (logo()) { <img class="nota-logo" [src]="logo()" alt="Logo toko" /> }
+        <h2>{{ storeName() || 'Nama Toko' }}</h2>
+<p>{{ storeAddress() || 'Alamat toko' }}</p>
+<p>{{ storePhone() || 'No. telepon' }}</p>
+      </header>
+
+      <div class="nota-meta">
+        <div><span>No. Nota</span><b>{{ invoiceNo() }}</b></div>
+        <div><span>Tanggal</span><b>{{ date() }}</b></div>
+        @if (customer()) { <div><span>Pelanggan</span><b>{{ customer() }}</b></div> }
+      </div>
+
+      <table>
+        <thead><tr><th>Item</th><th>Qty</th><th>Harga</th><th>Jumlah</th></tr></thead>
+        <tbody>
+          @for (item of items(); track $index) {
+            <tr><td>{{ item.name }}</td><td>{{ item.qty }}</td><td>Rp{{ rupiah(item.price) }}</td><td>Rp{{ rupiah(item.qty * item.price) }}</td></tr>
+          }
+        </tbody>
+      </table>
+
+      <div class="totals">
+        <div><span>Subtotal</span><b>Rp{{ rupiah(subtotal()) }}</b></div>
+        @if (discount() > 0) { <div><span>Diskon ({{ discount() }}%)</span><b>− Rp{{ rupiah(discountAmount()) }}</b></div> }
+        @if (taxOn()) { <div><span>{{ taxLabel() }} ({{ taxRate() }}%)</span><b>Rp{{ rupiah(taxAmount()) }}</b></div> }
+        <div class="grand"><span>TOTAL</span><b>Rp{{ rupiah(total()) }}</b></div>
+        <p class="terbilang">Terbilang: <i>{{ terbilang(total()) }}</i></p>
+      </div>
+
+      <footer>
+        <p>{{ notes() || 'Catatan untuk pelanggan' }}</p>
+        <p class="thanks">— Terima kasih —</p>
+      </footer>
+    </article>
+  </section>
+</div>

@@ -1,1 +1,13 @@
-/* You can add global styles to this file, and also import other style files */
+html, body {
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  background: #FBF3D1;
+  overflow-x: hidden;
+}
+
+body, input, select, button, textarea {
+  font-family: 'Poppins', Arial, sans-serif;
+}
