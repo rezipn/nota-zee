@@ -1,0 +1,29 @@
+name: Deploy NotaZee to GitHub Pages
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+jobs:
+  build-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npx ng build --configuration production --base-href /nota-zee/
+      - run: cp dist/nota-zee/browser/index.html dist/nota-zee/browser/404.html
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: dist/nota-zee/browser
+      - uses: actions/deploy-pages@v4
