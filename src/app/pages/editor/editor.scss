@@ -236,3 +236,19 @@ label.switch { display: flex; align-items: center; gap: 10px; cursor: pointer; f
   .layout { display: block; padding: 0; max-width: none; }
   .nota { box-shadow: none; max-width: none; margin: 0; border-radius: 0; break-inside: avoid; page-break-inside: avoid; }
 }
+
+@media (max-width: 768px) {
+  .tax-grid .field.check {
+    grid-column: 1 / -1;
+  }
+}
+
+.group input[type="date"] {
+  display: block;
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
+  height: 46px;
+  padding: 0 12px;
+}
