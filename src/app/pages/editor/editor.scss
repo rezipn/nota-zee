@@ -244,11 +244,8 @@ label.switch { display: flex; align-items: center; gap: 10px; cursor: pointer; f
 }
 
 .group input[type="date"] {
-  display: block;
-  width: 100%;
-  max-width: 100%;
-  min-width: 0;
-  box-sizing: border-box;
-  height: 46px;
-  padding: 0 12px;
+  width: 100% !important;
+  max-width: 100% !important;
+  min-width: 0 !important;
+  box-sizing: border-box !important;
 }
